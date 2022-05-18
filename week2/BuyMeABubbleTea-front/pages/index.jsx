@@ -2,7 +2,7 @@ import abi from "../utils/BuyMeABubbleTea.json";
 import { ethers } from "ethers";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-// import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 
 export default function Home() {
   // Contract Address & ABI
@@ -175,7 +175,7 @@ export default function Home() {
 
         {currentAccount ? (
           <div>
-            <form>
+            <form className={styles.formContainer}>
               <div>
                 <label>Name</label>
                 <br />
@@ -202,7 +202,7 @@ export default function Home() {
                   required
                 ></textarea>
               </div>
-              <div>
+              <div className={styles.buttonContainer}>
                 <button type="button" onClick={() => buyBubbleTea("0.001")}>
                   Send 1 Bubble Tea for 0.001ETH
                 </button>

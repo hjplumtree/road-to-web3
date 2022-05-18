@@ -118,3 +118,19 @@
     flex-direction: column;
   }
 }
+
+.formContainer {
+  input {
+    width: 100%;
+  }
+  textarea {
+    width: 100%;
+  }
+
+  .buttonContainer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
