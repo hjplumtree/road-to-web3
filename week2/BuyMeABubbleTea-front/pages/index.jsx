@@ -1,9 +1,8 @@
-import abi from '../utils/BuyMeABubbleTea.json';
+import abi from "../utils/BuyMeABubbleTea.json";
 import { ethers } from "ethers";
-import Head from 'next/head'
-import Image from 'next/image'
+import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import styles from '../styles/Home.module.css'
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   // Contract Address & ABI
@@ -18,18 +17,18 @@ export default function Home() {
 
   const onNameChange = (event) => {
     setName(event.target.value);
-  }
+  };
 
   const onMessageChange = (event) => {
     setMessage(event.target.value);
-  }
+  };
 
   // Wallet connection logic
   const isWalletConnected = async () => {
     try {
       const { ethereum } = window;
 
-      const accounts = await ethereum.request({method: 'eth_accounts'})
+      const accounts = await ethereum.request({ method: "eth_accounts" });
       console.log("accounts: ", accounts);
 
       if (accounts.length > 0) {
@@ -41,29 +40,29 @@ export default function Home() {
     } catch (error) {
       console.log("error: ", error);
     }
-  }
+  };
 
   const connectWallet = async () => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       if (!ethereum) {
         console.log("please install MetaMask");
       }
 
       const accounts = await ethereum.request({
-        method: 'eth_requestAccounts'
+        method: "eth_requestAccounts",
       });
 
       setCurrentAccount(accounts[0]);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const buyBubbleTea = async () => {
+  const buyBubbleTea = async (crypto) => {
     try {
-      const {ethereum} = window;
+      const { ethereum } = window;
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum, "any");
@@ -71,14 +70,14 @@ export default function Home() {
         const buyMeABubbleTea = new ethers.Contract(
           contractAddress,
           contractABI,
-          signer
+          signer,
         );
 
-        console.log("buying bubble tea..")
+        console.log("buying bubble tea..");
         const bubbleTeaTxn = await buyMeABubbleTea.buyBubbleTea(
           name ? name : "Santa",
           message ? message : "Enjoy your bubble tea!",
-          {value: ethers.utils.parseEther("0.001")}
+          { value: ethers.utils.parseEther(crypto) },
         );
 
         await bubbleTeaTxn.wait();
@@ -106,9 +105,9 @@ export default function Home() {
         const buyMeABubbleTea = new ethers.Contract(
           contractAddress,
           contractABI,
-          signer
+          signer,
         );
-        
+
         console.log("fetching memos from the blockchain..");
         const memos = await buyMeABubbleTea.getMemos();
         console.log("fetched!");
@@ -116,12 +115,11 @@ export default function Home() {
       } else {
         console.log("Metamask is not connected");
       }
-      
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   useEffect(() => {
     let buyMeABubbleTea;
     isWalletConnected();
@@ -137,12 +135,12 @@ export default function Home() {
           address: from,
           timestamp: new Date(timestamp * 1000),
           message,
-          name
-        }
+          name,
+        },
       ]);
     };
 
-    const {ethereum} = window;
+    const { ethereum } = window;
 
     // Listen for new memo events.
     if (ethereum) {
@@ -151,7 +149,7 @@ export default function Home() {
       buyMeABubbleTea = new ethers.Contract(
         contractAddress,
         contractABI,
-        signer
+        signer,
       );
 
       buyMeABubbleTea.on("NewMemo", onNewMemo);
@@ -161,9 +159,9 @@ export default function Home() {
       if (buyMeABubbleTea) {
         buyMeABubbleTea.off("NewMemo", onNewMemo);
       }
-    }
+    };
   }, []);
-  
+
   return (
     <div className={styles.container}>
       <Head>
@@ -173,33 +171,27 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Buy HeJ a Bubble Tea!
-        </h1>
-        
+        <h1 className={styles.title}>Buy HeJ a Bubble Tea!</h1>
+
         {currentAccount ? (
           <div>
             <form>
               <div>
-                <label>
-                  Name
-                </label>
-                <br/>
-                
+                <label>Name</label>
+                <br />
+
                 <input
                   id="name"
                   type="text"
                   placeholder="Santa"
                   value={name}
                   onChange={onNameChange}
-                  />
+                />
               </div>
-              <br/>
+              <br />
               <div>
-                <label>
-                  Send HeJ a message
-                </label>
-                <br/>
+                <label>Send HeJ a message</label>
+                <br />
 
                 <textarea
                   rows={3}
@@ -208,20 +200,13 @@ export default function Home() {
                   value={message}
                   onChange={onMessageChange}
                   required
-                >
-                </textarea>
+                ></textarea>
               </div>
               <div>
-                <button
-                  type="button"
-                  onClick={buyBubbleTea}
-                >
+                <button type="button" onClick={() => buyBubbleTea("0.001")}>
                   Send 1 Bubble Tea for 0.001ETH
                 </button>
-                <button
-                  type="button"
-                  onClick={buyBubbleTea}
-                >
+                <button type="button" onClick={() => buyBubbleTea("0.003")}>
                   Send 1 Large Bubble Tea for 0.003ETH
                 </button>
               </div>
@@ -232,16 +217,27 @@ export default function Home() {
         )}
       </main>
 
-      {currentAccount && (<h1>Memos received</h1>)}
+      {currentAccount && <h1>Memos received</h1>}
 
-      {currentAccount && (memos.map((memo, idx) => {
-        return (
-          <div key={idx} style={{border:"2px solid", "borderRadius":"5px", padding: "5px", margin: "5px"}}>
-            <p style={{"fontWeight":"bold"}}>"{memo.message}"</p>
-            <p>From: {memo.name} at {memo.timestamp.toString()}</p>
-          </div>
-        )
-      }))}
+      {currentAccount &&
+        memos.map((memo, idx) => {
+          return (
+            <div
+              key={idx}
+              style={{
+                border: "2px solid",
+                borderRadius: "5px",
+                padding: "5px",
+                margin: "5px",
+              }}
+            >
+              <p style={{ fontWeight: "bold" }}>"{memo.message}"</p>
+              <p>
+                From: {memo.name} at {memo.timestamp.toString()}
+              </p>
+            </div>
+          );
+        })}
 
       <footer className={styles.footer}>
         <a
@@ -253,5 +249,5 @@ export default function Home() {
         </a>
       </footer>
     </div>
-  )
+  );
 }
