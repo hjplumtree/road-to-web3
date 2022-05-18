@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+// 이 주소로 Goerli에 배포됨: 0x133394e78B6C0cD2F6ea57FFfBf930768967f827
+
 contract BuyMeABubbleTea {
     // 메모 만들어졌을때 실행되는(emit) 이벤트
     event NewMemo(
