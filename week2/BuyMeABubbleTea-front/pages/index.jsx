@@ -2,7 +2,7 @@ import abi from "../utils/BuyMeABubbleTea.json";
 import { ethers } from "ethers";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import styles from "../styles/Home.module.css";
+// import styles from "../styles/Home.module.css";
 
 export default function Home() {
   // Contract Address & ABI
